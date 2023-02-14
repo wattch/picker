@@ -421,8 +421,6 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     let endValue = getValue(values, 1);
 
     // >>>>> Format start & end values
-    console.log(startValue, endValue);
-    debugger;
     if (startValue && endValue && generateConfig.isAfter(startValue, endValue)) {
       if (
         // WeekPicker only compare week
@@ -440,6 +438,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           values = [startValue, null];
           endValue = null;
         } else {
+          // If we selected an end date before the start date, set the start date to the end date
           startValue = endValue;
           values = [startValue, null];
           endValue = null;
