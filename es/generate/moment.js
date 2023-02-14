@@ -75,9 +75,6 @@ var generateConfig = {
   isAfter: function isAfter(date1, date2) {
     return date1.isAfter(date2);
   },
-  isBefore: function isBefore(date1, date2) {
-    return date1.isBefore(date2);
-  },
   isValidate: function isValidate(date) {
     return date.isValid();
   },

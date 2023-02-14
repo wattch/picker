@@ -1,4 +1,4 @@
-import { addDays, addMonths, addYears, endOfMonth, format as formatDate, getDate as _getDate, getDay, getHours, getMinutes, getMonth as _getMonth, getSeconds, getWeek as _getWeek, getYear as _getYear, isAfter as _isAfter, isBefore as _isBefore, isValid, parse as parseDate, setDate as _setDate, setHours, setMinutes, setMonth as _setMonth, setSeconds, setYear as _setYear, startOfWeek } from 'date-fns';
+import { getDay, getYear as _getYear, getMonth as _getMonth, getDate as _getDate, endOfMonth, getHours, getMinutes, getSeconds, addYears, addMonths, addDays, setYear as _setYear, setMonth as _setMonth, setDate as _setDate, setHours, setMinutes, setSeconds, isAfter as _isAfter, isValid, getWeek as _getWeek, startOfWeek, format as formatDate, parse as parseDate } from 'date-fns';
 import * as Locale from 'date-fns/locale';
 var dealLocal = function dealLocal(str) {
   return str.replace(/_/g, '');
@@ -69,9 +69,6 @@ var generateConfig = {
   // Compare
   isAfter: function isAfter(date1, date2) {
     return _isAfter(date1, date2);
-  },
-  isBefore: function isBefore(date1, date2) {
-    return _isBefore(date1, date2);
   },
   isValidate: function isValidate(date) {
     return isValid(date);

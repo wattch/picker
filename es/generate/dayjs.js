@@ -1,11 +1,11 @@
 import dayjs from 'dayjs';
-import advancedFormat from 'dayjs/plugin/advancedFormat';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import localeData from 'dayjs/plugin/localeData';
+import { noteOnce } from "rc-util/es/warning";
 import weekday from 'dayjs/plugin/weekday';
+import localeData from 'dayjs/plugin/localeData';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
-import { noteOnce } from "rc-util/es/warning";
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 dayjs.extend(advancedFormat);
 dayjs.extend(weekday);
@@ -161,9 +161,6 @@ var generateConfig = {
   // Compare
   isAfter: function isAfter(date1, date2) {
     return date1.isAfter(date2);
-  },
-  isBefore: function isBefore(date1, date2) {
-    return date1.isBefore(date2);
   },
   isValidate: function isValidate(date) {
     return date.isValid();

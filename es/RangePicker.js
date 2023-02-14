@@ -302,31 +302,7 @@ function InnerRangePicker(props) {
     var endValue = getValue(values, 1);
 
     // >>>>> Format start & end values
-    if (startValue && endValue && generateConfig.isBefore(endValue, startValue)) {
-      if (
-      // WeekPicker only compare week
-      picker === 'week' && !isSameWeek(generateConfig, locale.locale, startValue, endValue) ||
-      // QuotaPicker only compare week
-      picker === 'quarter' && !isSameQuarter(generateConfig, startValue, endValue) ||
-      // Other non-TimePicker compare date
-      picker !== 'week' && picker !== 'quarter' && picker !== 'time' && !isSameDate(generateConfig, startValue, endValue)) {
-        // Clean up end date when start date is after end date
-        if (srcIndex === 1) {
-          values = [endValue, null];
-          endValue = null;
-          srcIndex = 0;
-        } else {
-          startValue = null;
-          values = [startValue, null];
-        }
-
-        // Clean up cache since invalidate
-        openRecordsRef.current = _defineProperty({}, srcIndex, true);
-      } else if (picker !== 'time' || order !== false) {
-        // Reorder when in same date
-        values = reorderValues(values, generateConfig);
-      }
-    } else if (startValue && endValue && generateConfig.isAfter(startValue, endValue)) {
+    if (startValue && endValue && generateConfig.isAfter(startValue, endValue)) {
       if (
       // WeekPicker only compare week
       picker === 'week' && !isSameWeek(generateConfig, locale.locale, startValue, endValue) ||
@@ -339,8 +315,11 @@ function InnerRangePicker(props) {
           values = [startValue, null];
           endValue = null;
         } else {
-          startValue = null;
-          values = [null, endValue];
+          // If we selected an end date before the start date, set the start date to the end date
+          startValue = endValue;
+          values = [startValue, null];
+          endValue = null;
+          srcIndex = 0;
         }
 
         // Clean up cache since invalidate
@@ -390,8 +369,8 @@ function InnerRangePicker(props) {
       nextOpenIndex = 0;
     }
 
-    // Don't go back to the start picker if the srcIndex === 1 and the new date is after the start date
-    if (srcIndex === 1 && generateConfig.isAfter(endValue, startValue)) {
+    // Don't go back to the start picker if the srcIndex === 1 and the end date is after the start date
+    if (srcIndex === 1 && startValue && endValue && generateConfig.isAfter(endValue, startValue)) {
       nextOpenIndex = null;
     }
     if (nextOpenIndex !== null && nextOpenIndex !== mergedActivePickerIndex && (!openRecordsRef.current[nextOpenIndex] || !getValue(values, nextOpenIndex)) && getValue(values, srcIndex)) {

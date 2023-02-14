@@ -19,7 +19,6 @@ export declare type GenerateConfig<DateType> = {
     setMinute: (value: DateType, minute: number) => DateType;
     setSecond: (value: DateType, second: number) => DateType;
     isAfter: (date1: DateType, date2: DateType) => boolean;
-    isBefore: (date1: DateType, date2: DateType) => boolean;
     isValidate: (date: DateType) => boolean;
     locale: {
         getWeekFirstDay: (locale: string) => number;
