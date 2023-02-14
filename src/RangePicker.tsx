@@ -416,7 +416,6 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
   function triggerChange(newValue: RangeValue<DateType>, sourceIndex: 0 | 1) {
     let values = newValue;
-    let srcIndex = sourceIndex;
     let startValue = getValue(values, 0);
     let endValue = getValue(values, 1);
 
@@ -438,16 +437,13 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           values = [startValue, null];
           endValue = null;
         } else {
-          // If we selected an end date before the start date, set the start date to the end date
-          startValue = endValue;
-          values = [startValue, null];
-          endValue = null;
-          srcIndex = 0;
+          startValue = null;
+          values = [null, endValue];
         }
 
         // Clean up cache since invalidate
         openRecordsRef.current = {
-          [srcIndex]: true,
+          [sourceIndex]: true,
         };
       } else if (picker !== 'time' || order !== false) {
         // Reorder when in same date
@@ -467,7 +463,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
         : '';
 
     if (onCalendarChange) {
-      const info: RangeInfo = { range: srcIndex === 0 ? 'start' : 'end' };
+      const info: RangeInfo = { range: sourceIndex === 0 ? 'start' : 'end' };
 
       onCalendarChange(values, [startStr, endStr], info);
     }
@@ -495,27 +491,22 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
     // Always open another picker if possible
     let nextOpenIndex: 0 | 1 = null;
-    if (srcIndex === 0 && !mergedDisabled[1]) {
+    if (sourceIndex === 0 && !mergedDisabled[1]) {
       nextOpenIndex = 1;
-    } else if (srcIndex === 1 && !mergedDisabled[0]) {
+    } else if (sourceIndex === 1 && !mergedDisabled[0]) {
       nextOpenIndex = 0;
-    }
-
-    // Don't go back to the start picker if the srcIndex === 1 and the end date is after the start date
-    if (srcIndex === 1 && startValue && endValue && generateConfig.isAfter(endValue, startValue)) {
-      nextOpenIndex = null;
     }
 
     if (
       nextOpenIndex !== null &&
       nextOpenIndex !== mergedActivePickerIndex &&
       (!openRecordsRef.current[nextOpenIndex] || !getValue(values, nextOpenIndex)) &&
-      getValue(values, srcIndex)
+      getValue(values, sourceIndex)
     ) {
       // Delay to focus to avoid input blur trigger expired selectedValues
       triggerOpenAndFocus(nextOpenIndex);
     } else {
-      triggerOpen(false, srcIndex);
+      triggerOpen(false, sourceIndex);
     }
   }
 
