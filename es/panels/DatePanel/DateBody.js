@@ -1,8 +1,8 @@
 import _extends from "@babel/runtime/helpers/esm/extends";
 import * as React from 'react';
-import { WEEK_DAY_COUNT, getWeekStartDate, isSameDate, isSameMonth, formatValue } from "../../utils/dateUtil";
-import RangeContext from "../../RangeContext";
 import useCellClassName from "../../hooks/useCellClassName";
+import RangeContext from "../../RangeContext";
+import { formatValue, getWeekStartDate, isSameDate, isSameMonth, WEEK_DAY_COUNT } from "../../utils/dateUtil";
 import PanelBody from "../PanelBody";
 function DateBody(props) {
   var prefixCls = props.prefixCls,
@@ -12,7 +12,8 @@ function DateBody(props) {
     rowCount = props.rowCount,
     viewDate = props.viewDate,
     value = props.value,
-    dateRender = props.dateRender;
+    dateRender = props.dateRender,
+    isSameCell = props.isSameCell;
   var _React$useContext = React.useContext(RangeContext),
     rangedValue = _React$useContext.rangedValue,
     hoverRangedValue = _React$useContext.hoverRangedValue;
@@ -44,7 +45,7 @@ function DateBody(props) {
     generateConfig: generateConfig,
     rangedValue: prefixColumn ? null : rangedValue,
     hoverRangedValue: prefixColumn ? null : hoverRangedValue,
-    isSameCell: function isSameCell(current, target) {
+    isSameCell: isSameCell || function (current, target) {
       return isSameDate(generateConfig, current, target);
     },
     isInView: function isInView(date) {

@@ -7,6 +7,7 @@ export declare type DateBodyPassProps<DateType> = {
     disabledDate?: (date: DateType) => boolean;
     prefixColumn?: (date: DateType) => React.ReactNode;
     rowClassName?: (date: DateType) => string;
+    isSameCell?: (current: DateType, target: DateType) => boolean;
 };
 export declare type DateBodyProps<DateType> = {
     prefixCls: string;
