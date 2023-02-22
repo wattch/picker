@@ -14,16 +14,12 @@ In order to use this repository in our app we had to do two things:
 2. Use the `overrides` functionality in our own app's `package.json`.
    ```json
    {
-      ...
-      dependencies: {
-        ...
-        "rc-picker": "github:wattch/picker#v2.7.1", // INSERT CORRECT TAG
-        ...
-      },
-      overrides: {
-        "rc-picker": "$rc-picker"
-      }
-      ...
+     "dependencies": {
+       "rc-picker": "github:wattch/picker#v2.7.1" // INSERT CORRECT TAG
+     },
+     "overrides": {
+       "rc-picker": "$rc-picker"
+     }
    }
    ```
 
