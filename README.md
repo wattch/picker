@@ -1,12 +1,46 @@
+⚠⚠️⚠️⚠⚠️⚠️️⚠⚠️⚠️️️
+
+## Fork Changes
+
+We have added custom functionality to the `2.7.*` tags as we currently do not support Ant v5 and Ant v4 references [rc-picker ~2.7.0 in the package.json](https://github.com/ant-design/ant-design/blob/fd9d689cda65a029da3a6f59abd7ef20698638b0/package.json#L142). The functionality includes:
+
+- If start and end date and end date changes to be before start date, set start date to end date and keep focus in end date
+  - rc-picker issue: (https://github.com/react-component/picker/issues/444)
+  - Fork PR: https://github.com/wattch/picker/pull/10
+
+In order to use this repository in our app we had to do two things:
+
+1. Include the `lib/` and `es/` build files by updating `.gitignore`
+2. Use the `overrides` functionality in our own app's `package.json`.
+   ```json
+   dependencies: {
+     ...
+     "rc-picker": "github:wattch/picker#v2.7.1", // INSERT CORRECT TAG
+     ...
+   },
+   overrides: {
+     "rc-picker": "$rc-picker"
+   }
+   ```
+
+**Maintaining**:
+
+In order to keep the fork in sync (even though no development from rc-picker is being added to <3.\* tags), we keep all of our code within the `wattch-master` branch. This is the default branch on the repository and correctly says it is out of sync with the fork's `master`.
+
+To make changes/add features:
+
+1. Checkout `wattch-master`
+2. Create a PR with the changes **and include the build files** from `npm run build && npm run compile`
+3. After PR merges we need to:
+   - Bump the version in `package.json`
+   - Push a new tag/create a new tag and a new release
+     - The best way so far to do this is to create a new release in the Github UI and create a new tag with the release.
+
+⚠⚠️⚠️⚠⚠️⚠️️⚠⚠️⚠️️️
+
 # rc-picker
 
-[![NPM version][npm-image]][npm-url]
-[![build status][github-actions-image]][github-actions-url]
-[![Codecov][codecov-image]][codecov-url]
-[![Dependencies][david-image]][david-url]
-[![DevDependencies][david-dev-image]][david-dev-url]
-[![npm download][download-image]][download-url]
-[![bundle size][bundlephobia-image]][bundlephobia-url]
+[![NPM version][npm-image]][npm-url] [![build status][github-actions-image]][github-actions-url] [![Codecov][codecov-image]][codecov-url] [![Dependencies][david-image]][david-url] [![DevDependencies][david-dev-image]][david-dev-url] [![npm download][download-image]][download-url] [![bundle size][bundlephobia-image]][bundlephobia-url]
 
 [npm-image]: http://img.shields.io/npm/v/rc-picker.svg?style=flat-square
 [npm-url]: http://npmjs.org/package/rc-picker
@@ -109,7 +143,7 @@ render(<Picker />, mountNode);
 ### RangePicker
 
 | Property | Type | Default | Description |
-| --- | --- | --- | --- |
+| --- | --- | --- | --- | --- |
 | prefixCls | String | rc-picker | prefixCls of this component |
 | className | String | '' | additional css class of root dom |
 | style | React.CSSProperties |  | additional style of root dom node |
