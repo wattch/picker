@@ -276,6 +276,7 @@ function InnerRangePicker(props) {
   }
   function triggerChange(newValue, sourceIndex) {
     var values = newValue;
+    var srcIndex = sourceIndex;
     var startValue = getValue(values, 0);
     var endValue = getValue(values, 1);
     // >>>>> Format start & end values
@@ -292,11 +293,14 @@ function InnerRangePicker(props) {
           values = [startValue, null];
           endValue = null;
         } else {
-          startValue = null;
-          values = [null, endValue];
+          // If we selected an end date before the start date, set the start date to the end date
+          startValue = endValue;
+          values = [startValue, null];
+          endValue = null;
+          srcIndex = 0;
         }
         // Clean up cache since invalidate
-        openRecordsRef.current = _defineProperty({}, sourceIndex, true);
+        openRecordsRef.current = _defineProperty({}, srcIndex, true);
       } else if (picker !== 'time' || order !== false) {
         // Reorder when in same date
         values = reorderValues(values, generateConfig);
@@ -315,7 +319,7 @@ function InnerRangePicker(props) {
     }) : '';
     if (onCalendarChange) {
       var info = {
-        range: sourceIndex === 0 ? 'start' : 'end'
+        range: srcIndex === 0 ? 'start' : 'end'
       };
       onCalendarChange(values, [startStr, endStr], info);
     }
@@ -333,16 +337,20 @@ function InnerRangePicker(props) {
     // >>>>> Open picker when
     // Always open another picker if possible
     var nextOpenIndex = null;
-    if (sourceIndex === 0 && !mergedDisabled[1]) {
+    if (srcIndex === 0 && !mergedDisabled[1]) {
       nextOpenIndex = 1;
-    } else if (sourceIndex === 1 && !mergedDisabled[0]) {
+    } else if (srcIndex === 1 && !mergedDisabled[0]) {
       nextOpenIndex = 0;
     }
-    if (nextOpenIndex !== null && nextOpenIndex !== mergedActivePickerIndex && (!openRecordsRef.current[nextOpenIndex] || !getValue(values, nextOpenIndex)) && getValue(values, sourceIndex)) {
+    // Don't go back to the start picker if the srcIndex === 1 and the end date is after the start date
+    if (srcIndex === 1 && startValue && endValue && generateConfig.isAfter(endValue, startValue)) {
+      nextOpenIndex = null;
+    }
+    if (nextOpenIndex !== null && nextOpenIndex !== mergedActivePickerIndex && (!openRecordsRef.current[nextOpenIndex] || !getValue(values, nextOpenIndex)) && getValue(values, srcIndex)) {
       // Delay to focus to avoid input blur trigger expired selectedValues
       triggerOpenAndFocus(nextOpenIndex);
     } else {
-      _triggerOpen(false, sourceIndex);
+      _triggerOpen(false, srcIndex);
     }
   }
   var forwardKeyDown = function forwardKeyDown(e) {
