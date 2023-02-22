@@ -468,7 +468,6 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       values && values[1]
         ? formatValue(values[1], { generateConfig, locale, format: formatList[0] })
         : '';
-    console.log(startStr, endStr);
 
     if (onCalendarChange) {
       const info: RangeInfo = { range: srcIndex === 0 ? 'start' : 'end' };
@@ -521,14 +520,6 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     } else {
       triggerOpen(false, srcIndex);
     }
-
-    // setNowValueText((curr) => {
-    //   if (srcIndex === 0) {
-    //     return [false, curr[1]];
-    //   } else {
-    //     return [curr[0], false];
-    //   }
-    // });
   }
 
   const forwardKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
@@ -595,7 +586,6 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           return [curr[0], true];
         }
       });
-      console.log(nowValueText, selectedValue);
     }
   };
 
@@ -677,7 +667,6 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       ) {
         return false;
       }
-      console.log('onSubmit', selectedValue, index);
 
       triggerChange(selectedValue, index);
       resetText();
@@ -988,7 +977,6 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       onOk: () => {
         if (getValue(selectedValue, mergedActivePickerIndex)) {
           // triggerChangeOld(selectedValue);
-          console.log('rangesNode', selectedValue, mergedActivePickerIndex);
           triggerChange(selectedValue, mergedActivePickerIndex);
           if (onOk) {
             onOk(selectedValue);
