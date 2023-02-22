@@ -13,13 +13,17 @@ In order to use this repository in our app we had to do two things:
 1. Include the `lib/` and `es/` build files by updating `.gitignore`
 2. Use the `overrides` functionality in our own app's `package.json`.
    ```json
-   dependencies: {
-     ...
-     "rc-picker": "github:wattch/picker#v2.7.1", // INSERT CORRECT TAG
-     ...
-   },
-   overrides: {
-     "rc-picker": "$rc-picker"
+   {
+      ...
+      dependencies: {
+        ...
+        "rc-picker": "github:wattch/picker#v2.7.1", // INSERT CORRECT TAG
+        ...
+      },
+      overrides: {
+        "rc-picker": "$rc-picker"
+      }
+      ...
    }
    ```
 
