@@ -446,6 +446,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           values = [startValue, null];
           endValue = null;
           srcIndex = 0;
+          setNowValueText([false, false]);
         }
 
         // Clean up cache since invalidate

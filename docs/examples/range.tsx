@@ -195,7 +195,7 @@ export default () => {
             value={undefined}
             locale={enUS}
             placeholder={['start...', 'end...']}
-            allowNowValue={useNow}
+            allowNowValue={[true, true]}
           />
         </div>
         <div style={{ margin: '0 8px' }}>
