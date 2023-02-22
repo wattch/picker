@@ -195,9 +195,8 @@ export default () => {
             value={undefined}
             locale={enUS}
             placeholder={['start...', 'end...']}
-            allowNowText={useNow}
+            allowNowValue={useNow}
           />
-          <button onClick={() => setUseNow([false, true])}>Set now</button>
         </div>
         <div style={{ margin: '0 8px' }}>
           <h3>Allow Now Text - Last 3 days</h3>
@@ -206,8 +205,8 @@ export default () => {
             value={value}
             locale={enUS}
             placeholder={['start...', 'end...']}
-            allowNowText={[true, true]}
-            isNowText={useNow}
+            allowNowValue={[true, true]}
+            isNowValue={useNow}
             onChange={(values) => {
               setUseNow((curr) => {
                 const updated = curr;
@@ -219,6 +218,7 @@ export default () => {
                 }
                 return updated;
               });
+              setValue(values);
             }}
           />
           <button
@@ -227,7 +227,7 @@ export default () => {
               setUseNow([false, true]);
             }}
           >
-            Set now
+            Set last 3 days to now
           </button>
         </div>
       </div>
