@@ -4,6 +4,7 @@ import moment from 'moment';
 import RangePicker from '../../src/RangePicker';
 import momentGenerateConfig from '../../src/generate/moment';
 import zhCN from '../../src/locale/zh_CN';
+import enUS from '../../src/locale/en_US';
 import '../../assets/index.less';
 import './common.less';
 
@@ -19,6 +20,7 @@ export default () => {
     defaultStartValue,
     defaultEndValue,
   ]);
+  const [useNow, setUseNow] = React.useState<[boolean, boolean]>([false, false]);
 
   const onChange = (newValue: [Moment | null, Moment | null] | null, formatStrings?: string[]) => {
     console.log('Change:', newValue, formatStrings);
@@ -185,6 +187,48 @@ export default () => {
             placeholder={['start...', 'end...']}
             disabledDate={disabledDate}
           />
+        </div>
+        <div style={{ margin: '0 8px' }}>
+          <h3>Allow Now Text</h3>
+          <RangePicker<Moment>
+            {...sharedProps}
+            value={undefined}
+            locale={enUS}
+            placeholder={['start...', 'end...']}
+            allowNowText={useNow}
+          />
+          <button onClick={() => setUseNow([false, true])}>Set now</button>
+        </div>
+        <div style={{ margin: '0 8px' }}>
+          <h3>Allow Now Text - Last 3 days</h3>
+          <RangePicker<Moment>
+            {...sharedProps}
+            value={value}
+            locale={enUS}
+            placeholder={['start...', 'end...']}
+            allowNowText={[true, true]}
+            isNowText={useNow}
+            onChange={(values) => {
+              setUseNow((curr) => {
+                const updated = curr;
+                if (!values[0].isSame(value[0])) {
+                  updated[0] = false;
+                }
+                if (!values[1].isSame(value[1])) {
+                  updated[1] = false;
+                }
+                return updated;
+              });
+            }}
+          />
+          <button
+            onClick={() => {
+              setValue([moment().subtract(3, 'day'), moment()]);
+              setUseNow([false, true]);
+            }}
+          >
+            Set now
+          </button>
         </div>
       </div>
     </div>

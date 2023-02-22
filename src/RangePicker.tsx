@@ -111,6 +111,16 @@ export type RangePickerSharedProps<DateType> = {
   onOk?: (dates: RangeValue<DateType>) => void;
   direction?: 'ltr' | 'rtl';
   autoComplete?: string;
+  /**
+   * Allows a user to type "now" in to the input field and the date will be set to generateConfig.getNow().
+   * If a user clicks a date the now will be reset.
+   *
+   */
+  allowNowValue?: [boolean, boolean];
+  /**
+   * Allows a user to set the value to be "now" by clicking a button or some outside event. A user must manage this state to determine if it is "now" or not. The component does not verify that the values passed in are actually "now", this only sets the text.
+   */
+  isNowValue?: [boolean, boolean];
   /** @private Internal control of active picker. Do not use since it's private usage */
   activePickerIndex?: 0 | 1;
   dateRender?: RangeDateRender<DateType>;
@@ -225,6 +235,8 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     direction,
     activePickerIndex,
     autoComplete = 'off',
+    allowNowValue,
+    isNowValue,
   } = props as MergedRangePickerProps<DateType>;
 
   const needConfirmButton: boolean = (picker === 'date' && !!showTime) || picker === 'time';
@@ -265,6 +277,10 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
     return [disabled || false, disabled || false];
   }, [disabled]);
+
+  const [nowValueText, setNowValueText] = useState<[boolean, boolean]>(
+    isNowValue || [false, false],
+  );
 
   // ============================= Value =============================
   const [mergedValue, setInnerValue] = useMergedState<RangeValue<DateType>>(null, {
@@ -452,6 +468,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       values && values[1]
         ? formatValue(values[1], { generateConfig, locale, format: formatList[0] })
         : '';
+    console.log(startStr, endStr);
 
     if (onCalendarChange) {
       const info: RangeInfo = { range: srcIndex === 0 ? 'start' : 'end' };
@@ -504,6 +521,14 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     } else {
       triggerOpen(false, srcIndex);
     }
+
+    // setNowValueText((curr) => {
+    //   if (srcIndex === 0) {
+    //     return [false, curr[1]];
+    //   } else {
+    //     return [curr[0], false];
+    //   }
+    // });
   }
 
   const forwardKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
@@ -552,6 +577,25 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     if (inputDate && !disabledFunc(inputDate)) {
       setSelectedValue(updateValues(selectedValue, inputDate, index));
       setViewDate(inputDate, index);
+      setNowValueText((curr) => {
+        if (index === 0) {
+          return [false, curr[1]];
+        } else {
+          return [curr[0], false];
+        }
+      });
+    } else if (allowNowValue && allowNowValue[index] && newText === 'now') {
+      const now = generateConfig.getNow();
+      setSelectedValue(updateValues(selectedValue, now, index));
+      setViewDate(now, index);
+      setNowValueText((curr) => {
+        if (index === 0) {
+          return [true, curr[1]];
+        } else {
+          return [curr[0], true];
+        }
+      });
+      console.log(nowValueText, selectedValue);
     }
   };
 
@@ -633,6 +677,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       ) {
         return false;
       }
+      console.log('onSubmit', selectedValue, index);
 
       triggerChange(selectedValue, index);
       resetText();
@@ -943,6 +988,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       onOk: () => {
         if (getValue(selectedValue, mergedActivePickerIndex)) {
           // triggerChangeOld(selectedValue);
+          console.log('rangesNode', selectedValue, mergedActivePickerIndex);
           triggerChange(selectedValue, mergedActivePickerIndex);
           if (onOk) {
             onOk(selectedValue);
@@ -1096,6 +1142,15 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     if (type === 'submit' || (type !== 'key' && !needConfirmButton)) {
       // triggerChange will also update selected values
       triggerChange(values, mergedActivePickerIndex);
+      // If we click on a date we are assuming "now" can be cleared
+      setNowValueText((curr) => {
+        if (mergedActivePickerIndex === 0) {
+          return [false, curr[1]];
+        } else {
+          return [curr[0], false];
+        }
+      });
+
       // clear hover value style
       if (mergedActivePickerIndex === 0) {
         onStartLeave();
@@ -1157,7 +1212,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
               id={id}
               disabled={mergedDisabled[0]}
               readOnly={inputReadOnly || typeof formatList[0] === 'function' || !startTyping}
-              value={startHoverValue || startText}
+              value={nowValueText[0] || isNowValue?.[0] ? 'now' : startHoverValue || startText}
               onChange={(e) => {
                 triggerStartTextChange(e.target.value);
               }}
@@ -1182,7 +1237,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
             <input
               disabled={mergedDisabled[1]}
               readOnly={inputReadOnly || typeof formatList[0] === 'function' || !endTyping}
-              value={endHoverValue || endText}
+              value={nowValueText[1] || isNowValue?.[1] ? 'now' : endHoverValue || endText}
               onChange={(e) => {
                 triggerEndTextChange(e.target.value);
               }}
