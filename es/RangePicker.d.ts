@@ -19,8 +19,8 @@ export type RangePickerSharedProps<DateType> = {
     separator?: React.ReactNode;
     allowEmpty?: [boolean, boolean];
     mode?: [PanelMode, PanelMode];
-    onChange?: (values: RangeValue<DateType>, formatString: [string, string]) => void;
-    onCalendarChange?: (values: RangeValue<DateType>, formatString: [string, string], info: RangeInfo) => void;
+    onChange?: (values: RangeValue<DateType>, formatString: [string, string], isNow?: [boolean, boolean]) => void;
+    onCalendarChange?: (values: RangeValue<DateType>, formatString: [string, string], info: RangeInfo, isNow?: [boolean, boolean]) => void;
     onPanelChange?: (values: RangeValue<DateType>, modes: [PanelMode, PanelMode]) => void;
     onFocus?: React.FocusEventHandler<HTMLInputElement>;
     onBlur?: React.FocusEventHandler<HTMLInputElement>;
@@ -32,6 +32,16 @@ export type RangePickerSharedProps<DateType> = {
     onOk?: (dates: RangeValue<DateType>) => void;
     direction?: 'ltr' | 'rtl';
     autoComplete?: string;
+    /**
+     * Allows a user to type "now" in to the input field and the date will be set to generateConfig.getNow().
+     * If a user clicks a date the now will be reset.
+     *
+     */
+    allowNowValue?: [boolean, boolean];
+    /**
+     * Allows a user to set the value to be "now" by clicking a button or some outside event. A user must manage this state to determine if it is "now" or not. The component does not verify that the values passed in are actually "now", this only sets the text.
+     */
+    isNowValue?: [boolean, boolean];
     /** @private Internal control of active picker. Do not use since it's private usage */
     activePickerIndex?: 0 | 1;
     dateRender?: RangeDateRender<DateType>;

@@ -106,7 +106,9 @@ function InnerRangePicker(props) {
     direction = props.direction,
     activePickerIndex = props.activePickerIndex,
     _props$autoComplete = props.autoComplete,
-    autoComplete = _props$autoComplete === void 0 ? 'off' : _props$autoComplete;
+    autoComplete = _props$autoComplete === void 0 ? 'off' : _props$autoComplete,
+    allowNowValue = props.allowNowValue,
+    isNowValue = props.isNowValue;
   var needConfirmButton = picker === 'date' && !!showTime || picker === 'time';
   // We record opened status here in case repeat open with picker
   var openRecordsRef = useRef({});
@@ -139,6 +141,13 @@ function InnerRangePicker(props) {
     }
     return [disabled || false, disabled || false];
   }, [disabled]);
+  var _useState = useState(isNowValue || [false, false]),
+    _useState2 = _slicedToArray(_useState, 2),
+    nowValueText = _useState2[0],
+    setNowValueText = _useState2[1];
+  useEffect(function () {
+    setNowValueText(isNowValue);
+  }, [isNowValue]);
   // ============================= Value =============================
   var _useMergedState3 = useMergedState(null, {
       value: value,
@@ -231,10 +240,10 @@ function InnerRangePicker(props) {
   var endOpen = mergedOpen && mergedActivePickerIndex === 1;
   // ============================= Popup =============================
   // Popup min width
-  var _useState = useState(0),
-    _useState2 = _slicedToArray(_useState, 2),
-    popupMinWidth = _useState2[0],
-    setPopupMinWidth = _useState2[1];
+  var _useState3 = useState(0),
+    _useState4 = _slicedToArray(_useState3, 2),
+    popupMinWidth = _useState4[0],
+    setPopupMinWidth = _useState4[1];
   useEffect(function () {
     if (!mergedOpen && containerRef.current) {
       setPopupMinWidth(containerRef.current.offsetWidth);
@@ -274,7 +283,7 @@ function InnerRangePicker(props) {
       }
     }, 0);
   }
-  function triggerChange(newValue, sourceIndex) {
+  function triggerChange(newValue, sourceIndex, nowValueEnabled) {
     var values = newValue;
     var srcIndex = sourceIndex;
     var startValue = getValue(values, 0);
@@ -298,6 +307,7 @@ function InnerRangePicker(props) {
           values = [startValue, null];
           endValue = null;
           srcIndex = 0;
+          setNowValueText([false, false]);
         }
         // Clean up cache since invalidate
         openRecordsRef.current = _defineProperty({}, srcIndex, true);
@@ -321,7 +331,7 @@ function InnerRangePicker(props) {
       var info = {
         range: srcIndex === 0 ? 'start' : 'end'
       };
-      onCalendarChange(values, [startStr, endStr], info);
+      onCalendarChange(values, [startStr, endStr], info, [(allowNowValue === null || allowNowValue === void 0 ? void 0 : allowNowValue[0]) && nowValueEnabled[0] ? true : false, (allowNowValue === null || allowNowValue === void 0 ? void 0 : allowNowValue[1]) && nowValueEnabled[1] ? true : false]);
     }
     // >>>>> Trigger `onChange` event
     var canStartValueTrigger = canValueTrigger(startValue, 0, mergedDisabled, allowEmpty);
@@ -331,7 +341,7 @@ function InnerRangePicker(props) {
       // Trigger onChange only when value is validate
       setInnerValue(values);
       if (onChange && (!isEqual(generateConfig, getValue(mergedValue, 0), startValue) || !isEqual(generateConfig, getValue(mergedValue, 1), endValue))) {
-        onChange(values, [startStr, endStr]);
+        onChange(values, [startStr, endStr], [(allowNowValue === null || allowNowValue === void 0 ? void 0 : allowNowValue[0]) && nowValueEnabled[0] ? true : false, (allowNowValue === null || allowNowValue === void 0 ? void 0 : allowNowValue[1]) && nowValueEnabled[1] ? true : false]);
       }
     }
     // >>>>> Open picker when
@@ -389,6 +399,30 @@ function InnerRangePicker(props) {
     if (inputDate && !disabledFunc(inputDate)) {
       setSelectedValue(updateValues(selectedValue, inputDate, index));
       setViewDate(inputDate, index);
+      setNowValueText(function (curr) {
+        if (index === 0) {
+          return [false, curr[1]];
+        } else {
+          return [curr[0], false];
+        }
+      });
+    } else if (allowNowValue && allowNowValue[index] && newText === 'now') {
+      var now = generateConfig.getNow();
+      if (index === 0 && generateConfig.isAfter(now, selectedValue[1])) {
+        // TODO: if we want finer next date, we need to add to generateConfig an `addHour` or `addMinute`. It only supports `addDate`
+        setSelectedValue([now, generateConfig.addDate(now, 1)]);
+        setViewDate(now, 1);
+        setViewDate(now, index);
+        setNowValueText([true, false]);
+      } else if (index === 0) {
+        setSelectedValue([now, inputDate]);
+        setViewDate(now, index);
+        setNowValueText([true, (nowValueText === null || nowValueText === void 0 ? void 0 : nowValueText[1]) || false]);
+      } else if (index === 1) {
+        setSelectedValue(updateValues(selectedValue, now, 1));
+        setViewDate(now, index);
+        setNowValueText([nowValueText === null || nowValueText === void 0 ? void 0 : nowValueText[0], true]);
+      }
     }
   };
   var _useTextValueMapping = useTextValueMapping({
@@ -411,15 +445,15 @@ function InnerRangePicker(props) {
     endText = _useTextValueMapping4[0],
     triggerEndTextChange = _useTextValueMapping4[1],
     resetEndText = _useTextValueMapping4[2];
-  var _useState3 = useState(null),
-    _useState4 = _slicedToArray(_useState3, 2),
-    rangeHoverValue = _useState4[0],
-    setRangeHoverValue = _useState4[1];
-  // ========================== Hover Range ==========================
   var _useState5 = useState(null),
     _useState6 = _slicedToArray(_useState5, 2),
-    hoverRangedValue = _useState6[0],
-    setHoverRangedValue = _useState6[1];
+    rangeHoverValue = _useState6[0],
+    setRangeHoverValue = _useState6[1];
+  // ========================== Hover Range ==========================
+  var _useState7 = useState(null),
+    _useState8 = _slicedToArray(_useState7, 2),
+    hoverRangedValue = _useState8[0],
+    setHoverRangedValue = _useState8[1];
   var _useHoverValue = useHoverValue(startText, {
       formatList: formatList,
       generateConfig: generateConfig,
@@ -480,7 +514,7 @@ function InnerRangePicker(props) {
         disabledDate && disabledDate(selectedValue[index])) {
           return false;
         }
-        triggerChange(selectedValue, index);
+        triggerChange(selectedValue, index, nowValueText);
         resetText();
       },
       onCancel: function onCancel() {
@@ -601,7 +635,7 @@ function InnerRangePicker(props) {
     return {
       label: label,
       onClick: function onClick() {
-        triggerChange(newValues, null);
+        triggerChange(newValues, null, nowValueText);
         _triggerOpen(false, mergedActivePickerIndex);
       },
       onMouseEnter: function onMouseEnter() {
@@ -711,7 +745,7 @@ function InnerRangePicker(props) {
       onOk: function onOk() {
         if (getValue(selectedValue, mergedActivePickerIndex)) {
           // triggerChangeOld(selectedValue);
-          triggerChange(selectedValue, mergedActivePickerIndex);
+          triggerChange(selectedValue, mergedActivePickerIndex, nowValueText);
           if (_onOk) {
             _onOk(selectedValue);
           }
@@ -796,7 +830,7 @@ function InnerRangePicker(props) {
         if (!mergedDisabled[1]) {
           values = updateValues(values, null, 1);
         }
-        triggerChange(values, null);
+        triggerChange(values, null, nowValueText);
         _triggerOpen(false, mergedActivePickerIndex);
       },
       className: "".concat(prefixCls, "-clear")
@@ -826,8 +860,16 @@ function InnerRangePicker(props) {
   var onContextSelect = function onContextSelect(date, type) {
     var values = updateValues(selectedValue, date, mergedActivePickerIndex);
     if (type === 'submit' || type !== 'key' && !needConfirmButton) {
+      // If we click on a date we are assuming "now" can be cleared
+      var newNowValueText = nowValueText;
+      if (mergedActivePickerIndex === 0) {
+        newNowValueText = [false, (nowValueText === null || nowValueText === void 0 ? void 0 : nowValueText[1]) || false];
+      } else {
+        newNowValueText = [(nowValueText === null || nowValueText === void 0 ? void 0 : nowValueText[0]) || false, false];
+      }
+      setNowValueText(newNowValueText);
       // triggerChange will also update selected values
-      triggerChange(values, mergedActivePickerIndex);
+      triggerChange(values, mergedActivePickerIndex, newNowValueText);
       // clear hover value style
       if (mergedActivePickerIndex === 0) {
         onStartLeave();
@@ -875,7 +917,7 @@ function InnerRangePicker(props) {
     id: id,
     disabled: mergedDisabled[0],
     readOnly: inputReadOnly || typeof formatList[0] === 'function' || !startTyping,
-    value: startHoverValue || startText,
+    value: (allowNowValue === null || allowNowValue === void 0 ? void 0 : allowNowValue[0]) && (nowValueText === null || nowValueText === void 0 ? void 0 : nowValueText[0]) ? 'now' : startHoverValue || startText,
     onChange: function onChange(e) {
       triggerStartTextChange(e.target.value);
     },
@@ -893,7 +935,7 @@ function InnerRangePicker(props) {
   }, /*#__PURE__*/React.createElement("input", _extends({
     disabled: mergedDisabled[1],
     readOnly: inputReadOnly || typeof formatList[0] === 'function' || !endTyping,
-    value: endHoverValue || endText,
+    value: (allowNowValue === null || allowNowValue === void 0 ? void 0 : allowNowValue[1]) && (nowValueText === null || nowValueText === void 0 ? void 0 : nowValueText[1]) ? 'now' : endHoverValue || endText,
     onChange: function onChange(e) {
       triggerEndTextChange(e.target.value);
     },
