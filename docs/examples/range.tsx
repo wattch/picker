@@ -81,35 +81,167 @@ export default () => {
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         <div style={{ margin: '0 8px' }}>
           <h3>Basic</h3>
-          <div style={{ margin: '0 8px' }}>
-            <h3>Allow Now Text</h3>
-            <RangePicker<Moment>
-              {...sharedProps}
-              value={undefined}
-              locale={enUS}
-              placeholder={['start...', 'end...']}
-              allowNowValue={[true, true]}
-            />
-          </div>
-          <div style={{ margin: '0 8px' }}>
-            <h3>Allow Now Text - Last 3 days</h3>
-            <RangePicker<Moment>
-              {...sharedProps}
-              value={value}
-              locale={enUS}
-              placeholder={['start...', 'end...']}
-              allowNowValue={[true, true]}
-              isNowValue={useNow}
-            />
-            <button
-              onClick={() => {
-                setValue([moment().subtract(3, 'day'), moment()]);
-                setUseNow([false, true]);
-              }}
-            >
-              Set last 3 days to now
-            </button>
-          </div>
+          <RangePicker<Moment>
+            {...sharedProps}
+            value={undefined}
+            locale={zhCN}
+            allowClear
+            ref={rangePickerRef}
+            defaultValue={[moment('1990-09-03'), moment('1989-11-28')]}
+            clearIcon={<span>X</span>}
+            suffixIcon={<span>O</span>}
+          />
+          <RangePicker<Moment>
+            {...sharedProps}
+            locale={zhCN}
+            allowClear
+            ref={rangePickerRef}
+            showTime
+            style={{ width: 580 }}
+            ranges={{
+              ranges: [moment(), moment().add(10, 'day')],
+            }}
+            onOk={(dates) => {
+              console.log('OK!!!', dates);
+            }}
+          />
+          <RangePicker<Moment>
+            {...sharedProps}
+            value={undefined}
+            locale={zhCN}
+            allowClear
+            picker="time"
+            ranges={{
+              test: [moment(), moment().add(1, 'hour')],
+            }}
+          />
+          <RangePicker<Moment>
+            {...sharedProps}
+            value={undefined}
+            locale={zhCN}
+            allowClear
+            picker="time"
+            style={{ width: 280 }}
+          />
+        </div>
+
+        <div style={{ margin: '0 8px' }}>
+          <h3>Focus</h3>
+          <RangePicker<Moment>
+            {...sharedProps}
+            locale={zhCN}
+            allowClear
+            ref={rangePickerRef}
+            // style={{ width: 500 }}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              rangePickerRef.current!.focus();
+            }}
+          >
+            Focus!
+          </button>
+        </div>
+
+        <div style={{ margin: '0 8px' }}>
+          <h3>Year</h3>
+          <RangePicker<Moment> {...sharedProps} locale={zhCN} picker="year" />
+        </div>
+
+        <div style={{ margin: '0 8px' }}>
+          <h3>Quarter</h3>
+          <RangePicker<Moment> {...sharedProps} locale={zhCN} picker="quarter" />
+        </div>
+
+        <div style={{ margin: '0 8px' }}>
+          <h3>Month</h3>
+          <RangePicker<Moment> {...sharedProps} locale={zhCN} picker="month" />
+        </div>
+
+        <div style={{ margin: '0 8px' }}>
+          <h3>Week</h3>
+          <RangePicker<Moment> {...sharedProps} locale={zhCN} picker="week" />
+        </div>
+
+        <div style={{ margin: '0 8px' }}>
+          <h3>Allow Empty</h3>
+          <RangePicker<Moment>
+            {...sharedProps}
+            locale={zhCN}
+            allowClear
+            allowEmpty={[true, true]}
+          />
+        </div>
+
+        <div style={{ margin: '0 8px' }}>
+          <h3>Start disabled</h3>
+          <RangePicker<Moment> {...sharedProps} locale={zhCN} allowClear disabled={[true, false]} />
+        </div>
+        <div style={{ margin: '0 8px' }}>
+          <h3>End disabled</h3>
+          <RangePicker<Moment> {...sharedProps} locale={zhCN} allowClear disabled={[false, true]} />
+        </div>
+
+        <div style={{ margin: '0 8px' }}>
+          <h3>Uncontrolled</h3>
+          <RangePicker<Moment>
+            {...sharedProps}
+            value={undefined}
+            locale={zhCN}
+            placeholder={['start...', 'end...']}
+            disabled={[false, true]}
+            allowEmpty={[false, true]}
+            renderExtraFooter={() => <div>extra footer</div>}
+          />
+        </div>
+        <div style={{ margin: '0 8px' }}>
+          <h3>Uncontrolled2</h3>
+          <RangePicker<Moment>
+            {...sharedProps}
+            value={undefined}
+            locale={zhCN}
+            placeholder={['start...', 'end...']}
+          />
+        </div>
+        <div style={{ margin: '0 8px' }}>
+          <h3>DisabledDate</h3>
+          <RangePicker<Moment>
+            {...sharedProps}
+            value={undefined}
+            locale={zhCN}
+            placeholder={['start...', 'end...']}
+            disabledDate={disabledDate}
+          />
+        </div>
+        <div style={{ margin: '0 8px' }}>
+          <h3>Allow Now Text</h3>
+          <RangePicker<Moment>
+            {...sharedProps}
+            value={undefined}
+            locale={enUS}
+            placeholder={['start...', 'end...']}
+            allowNowValue={[true, true]}
+          />
+        </div>
+        <div style={{ margin: '0 8px' }}>
+          <h3>Allow Now Text - Last 3 days</h3>
+          <RangePicker<Moment>
+            {...sharedProps}
+            value={value}
+            locale={enUS}
+            placeholder={['start...', 'end...']}
+            allowNowValue={[true, true]}
+            isNowValue={useNow}
+          />
+          <button
+            onClick={() => {
+              setValue([moment().subtract(3, 'day'), moment()]);
+              setUseNow([false, true]);
+            }}
+          >
+            Set last 3 days to now
+          </button>
         </div>
       </div>
     </div>
